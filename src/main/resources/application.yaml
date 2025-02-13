@@ -1,0 +1,19 @@
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/freshfood
+#    username: lemin
+#    password: 123456
+#    driver-class-name: org.postgresql.Driver
+#  jpa:
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#
+#server:
+#  port: 80
+#
+cloudinary:
+  cloud-name: digtjnoh3
+  api-key: 179441211917755
+  api-secret: 3uTcB1AJ6qhHTzZm6Oap7P8wPpU
