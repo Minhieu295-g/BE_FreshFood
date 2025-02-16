@@ -9,4 +9,6 @@ public interface ParentCategoryService {
     void updateParentCategory(int id, ParentCategoryRequestDTO parentCategoryRequestDTO, String imageUrl);
     void deleteParentCategory(int id);
     PageResponse getParentCategory(int pageNo, int pageSize);
+
+    ParentCategory getParentCategoryById(int id);
 }

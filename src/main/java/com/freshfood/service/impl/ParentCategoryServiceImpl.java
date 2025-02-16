@@ -62,4 +62,9 @@ public class ParentCategoryServiceImpl implements ParentCategoryService {
                 .build();
     }
 
+    @Override
+    public ParentCategory getParentCategoryById(int id) {
+        return parentCategoryRepository.findById(id).orElseThrow(() -> null);
+    }
+
 }
