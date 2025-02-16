@@ -10,6 +10,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "parent_categories")
 public class ParentCategory extends AbsEntity<Integer> {
     @Column(name = "name")
@@ -18,7 +20,7 @@ public class ParentCategory extends AbsEntity<Integer> {
     @Column(name="image_url")
     private String imageUrl;
 
-//    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JsonManagedReference
-//    private Set<Category> categories = new HashSet<>();
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Category> categories = new HashSet<>();
 }
