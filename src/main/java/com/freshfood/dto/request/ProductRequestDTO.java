@@ -21,23 +21,6 @@ public class ProductRequestDTO implements Serializable {
     @NotNull(message = "description must be not null")
     private String description;
 
-    @NotNull(message = "price must be not null")
-    @Min(1000)
-    private double price;
-
-    @EnumPattern(name = "unit", regexp = "KG|G|L|ML|BOX|CAN|BOTTLE|PIECE|BAG|BUNDLE|PACK")
-    private Unit unit;
-
-    @NotNull(message = "Expiry date must be not null")
-    @JsonFormat(pattern = "MM/dd/yyyy")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date expiryDate;
-
-    @EnumPattern(name = "status", regexp = "AVAILABLE|OUT_OF_STOCK|DISCONTINUED|PRE_ORDER|ARCHIVED")
-    private ProductStatus status;
-
     private int categoryId;
-
-    private int promotionId;
 
 }
