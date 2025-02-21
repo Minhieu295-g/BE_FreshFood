@@ -21,7 +21,7 @@ public class Product extends AbsEntity<Integer>{
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1000)
     private String description;
 
     @Column(name = "thumbnail_url")
@@ -35,5 +35,8 @@ public class Product extends AbsEntity<Integer>{
     @JsonManagedReference
     private Set<ProductImage> productImages = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<ProductVariant> productVariants = new HashSet<>();
 
 }

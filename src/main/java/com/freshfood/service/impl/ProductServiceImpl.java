@@ -1,6 +1,7 @@
 package com.freshfood.service.impl;
 
 import com.freshfood.dto.request.ProductRequestDTO;
+import com.freshfood.dto.response.*;
 import com.freshfood.model.Product;
 import com.freshfood.model.ProductImage;
 import com.freshfood.repository.CategoryRepository;
@@ -9,9 +10,15 @@ import com.freshfood.service.CategoryService;
 import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,17 +40,60 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateProduct(int id, ProductRequestDTO productRequestDTO, String thumbnailUrl, String[] imageUrl) {
-
+        Product product = getProduct(id);
+        product.setProductImages(convertToProductImage(imageUrl, product));
+        product.setName(productRequestDTO.getName());
+        product.setDescription(productRequestDTO.getDescription());
+        product.setCategory(categoryService.getCategoryById(productRequestDTO.getCategoryId()));
+        product.setThumbnailUrl(thumbnailUrl);
+        productRepository.save(product);
     }
 
     @Override
     public void deleteProduct(int id) {
-
+        productRepository.deleteById(id);
     }
 
     @Override
     public Product getProduct(int id) {
-        return null;
+        return productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public PageResponse getProducts(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Product> products = productRepository.findAll(pageable);
+        List<ProductResponseDTO> productResponseDTOS = products.stream().map(product -> ProductResponseDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .thumbnailUrl(product.getThumbnailUrl())
+                .category(CategoryResponseDTO.builder()
+                        .id(product.getCategory().getId())
+                        .name(product.getCategory().getName())
+                        .build())
+                .productImages((HashSet<ProductImageResponseDTO>) product.getProductImages().stream().map(image -> ProductImageResponseDTO.builder()
+                        .id(image.getId())
+                        .altText(image.getAltText())
+                        .imageUrl(image.getImageUrl())
+                        .build()).collect(Collectors.toSet()))
+                .productVariants((HashSet<ProductVariantResponseDTO>) product.getProductVariants().stream().map(variant -> ProductVariantResponseDTO.builder()
+                        .id(variant.getId())
+                        .name(variant.getName())
+                        .price(variant.getPrice())
+                        .unit(variant.getUnit().toString())
+                        .expiryDate(variant.getExpiryDate())
+                        .status(variant.getStatus().toString())
+                        .discountPercentage(variant.getDiscountPercentage())
+                        .thumbnailUrl(variant.getThumbnailUrl())
+                        .build()).collect(Collectors.toSet()))
+                .build()).toList();
+        return PageResponse.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalPage(products.getTotalPages())
+                .items(productResponseDTOS)
+                .build();
     }
 
     private HashSet<ProductImage> convertToProductImage(String[] urlImage, Product product) {
