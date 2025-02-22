@@ -35,7 +35,7 @@ public class Product extends AbsEntity<Integer>{
     @JsonManagedReference
     private Set<ProductImage> productImages = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<ProductVariant> productVariants = new HashSet<>();
 

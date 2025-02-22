@@ -6,6 +6,7 @@ import com.freshfood.model.Product;
 import com.freshfood.model.ProductImage;
 import com.freshfood.repository.CategoryRepository;
 import com.freshfood.repository.ProductRepository;
+import com.freshfood.repository.search.ProductSearchRepository;
 import com.freshfood.service.CategoryService;
 import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ProductSearchRepository productSearchRepository;
     @Override
     public int addProduct(ProductRequestDTO productRequestDTO, String thumbnailUrl, String[] imageUrl) {
         Product product = Product.builder()
@@ -57,6 +59,36 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProduct(int id) {
         return productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public ProductResponseDTO getProductResponseDTO(int id) {
+        Product product = getProduct(id);
+        return ProductResponseDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .thumbnailUrl(product.getThumbnailUrl())
+                .category(CategoryResponseDTO.builder()
+                        .id(product.getCategory().getId())
+                        .name(product.getCategory().getName())
+                        .build())
+                .productImages((HashSet<ProductImageResponseDTO>) product.getProductImages().stream().map(image -> ProductImageResponseDTO.builder()
+                        .id(image.getId())
+                        .altText(image.getAltText())
+                        .imageUrl(image.getImageUrl())
+                        .build()).collect(Collectors.toSet()))
+                .productVariants((HashSet<ProductVariantResponseDTO>) product.getProductVariants().stream().map(variant -> ProductVariantResponseDTO.builder()
+                        .id(variant.getId())
+                        .name(variant.getName())
+                        .price(variant.getPrice())
+                        .unit(variant.getUnit().toString())
+                        .expiryDate(variant.getExpiryDate())
+                        .status(variant.getStatus().toString())
+                        .discountPercentage(variant.getDiscountPercentage())
+                        .thumbnailUrl(variant.getThumbnailUrl())
+                        .build()).collect(Collectors.toSet()))
+                .build();
     }
 
     @Override
@@ -94,6 +126,11 @@ public class ProductServiceImpl implements ProductService {
                 .totalPage(products.getTotalPages())
                 .items(productResponseDTOS)
                 .build();
+    }
+
+    @Override
+    public PageResponse getProductDefaultWithSearchAndSearch(int pageNo, int pageSize, String sort, String search) {
+        return productSearchRepository.getAllDefaultProductsWithSortAndSearch(pageNo, pageSize, sort, search);
     }
 
     private HashSet<ProductImage> convertToProductImage(String[] urlImage, Product product) {

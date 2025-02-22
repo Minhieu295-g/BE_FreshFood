@@ -37,10 +37,19 @@ public class ProductController {
         productService.deleteProduct(id);
         return new ResponseData<>(HttpStatus.OK.value(), "Product deleted successfully");
     }
-
+    @GetMapping("/{id}")
+    public ResponseData<?> getProductById(@PathVariable int id) {
+        return new ResponseData<>(HttpStatus.OK.value(), "Get product successfully", productService.getProductResponseDTO(id));
+    }
     @GetMapping("/list")
     public ResponseData<?> getProducts(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products successfully", productService.getProducts(pageNo,pageSize));
     }
+
+    @GetMapping("/list-default")
+    public ResponseData<?> getProductDefaultWithSearchAndSort(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String sort, @RequestParam(required = false) String search) {
+        return new ResponseData<>(HttpStatus.OK.value(), "Get list products default successfully", productService.getProductDefaultWithSearchAndSearch(pageNo,pageSize,sort,search));
+    }
+
 
 }

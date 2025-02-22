@@ -10,5 +10,7 @@ public interface ProductService {
     void updateProduct(int id,ProductRequestDTO productRequestDTO, String thumbnailUrl, String[] imageUrl);
     void deleteProduct(int id);
     Product getProduct(int id);
+    ProductResponseDTO getProductResponseDTO(int id);
     PageResponse getProducts(int pageNo, int pageSize);
+    PageResponse getProductDefaultWithSearchAndSearch(int pageNo, int pageSize, String sort, String search);
 }

@@ -23,18 +23,18 @@ public class ProductVariantController {
     private final CloudinaryService cloudinaryService;
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseData<?> addProductVariant(@RequestPart("thumbnail") MultipartFile thumbnail, @Valid @RequestPart("product") ProductVariantRequestDTO productVariantRequestDTO) throws IOException {
+    public ResponseData<?> addProductVariant(@RequestPart("thumbnail") MultipartFile thumbnail, @Valid @RequestPart("product_variant") ProductVariantRequestDTO productVariantRequestDTO) throws IOException {
         int id = productVariantService.addProductVariant(productVariantRequestDTO, cloudinaryService.uploadImage(thumbnail));
-        return new ResponseData<>(HttpStatus.OK.value(), "Product was added successfully", id);
+        return new ResponseData<>(HttpStatus.OK.value(), "Product variant was added successfully", id);
     }
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseData<?> updateProductVariant(@PathVariable int id, @RequestPart("thumbnail") MultipartFile thumbnail, @Valid @RequestPart("product") ProductVariantRequestDTO productVariantRequestDTO) throws IOException {
+    public ResponseData<?> updateProductVariant(@PathVariable int id, @RequestPart("thumbnail") MultipartFile thumbnail, @Valid @RequestPart("product_variant") ProductVariantRequestDTO productVariantRequestDTO) throws IOException {
         productVariantService.updateProductVariant(id, productVariantRequestDTO, cloudinaryService.uploadImage(thumbnail));
-        return new ResponseData<>(HttpStatus.OK.value(), "Product was updated successfully");
+        return new ResponseData<>(HttpStatus.OK.value(), "Product variant was updated successfully");
     }
     @DeleteMapping("/{id}")
     public ResponseData<?> deleteProductVariant(@PathVariable int id) {
         productVariantService.deleteProductVariant(id);
-        return new ResponseData<>(HttpStatus.OK.value(), "Product was deleted successfully");
+        return new ResponseData<>(HttpStatus.OK.value(), "Product variant was deleted successfully");
     }
 }

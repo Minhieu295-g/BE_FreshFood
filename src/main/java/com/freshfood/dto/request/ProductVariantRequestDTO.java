@@ -20,18 +20,12 @@ import java.util.Date;
 @Setter
 @Builder
 public class ProductVariantRequestDTO implements Serializable {
-    @NotBlank(message = "product id must be not blank")
     private int productId;
 
-    @NotBlank(message = "name must be not blank")
     private String name;
 
-    @NotNull(message = "price must be not null")
-    @Min(1000)
     private double price;
 
-    @Min(0)
-    @Max(99)
     private int discountPercentage;
 
     @EnumPattern(name = "unit", regexp = "KG|G|L|ML|BOX|CAN|BOTTLE|PIECE|BAG|BUNDLE|PACK")
