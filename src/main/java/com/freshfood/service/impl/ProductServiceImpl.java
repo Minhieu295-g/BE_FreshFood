@@ -133,6 +133,11 @@ public class ProductServiceImpl implements ProductService {
         return productSearchRepository.getAllDefaultProductsWithSortAndSearch(pageNo, pageSize, sort, search);
     }
 
+    @Override
+    public PageResponse advanceSearchWithSpecification(Pageable pageable, String[] product, String[] category, String[] productVariant) {
+        return productSearchRepository.advanceSearchWithSpecification(pageable,product,category, productVariant);
+    }
+
     private HashSet<ProductImage> convertToProductImage(String[] urlImage, Product product) {
         HashSet<ProductImage> productImages = new HashSet<>();
         for (int i = 0; i < urlImage.length; i++) {

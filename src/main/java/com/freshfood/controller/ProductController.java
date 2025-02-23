@@ -6,6 +6,7 @@ import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -49,6 +50,10 @@ public class ProductController {
     @GetMapping("/list-default")
     public ResponseData<?> getProductDefaultWithSearchAndSort(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String sort, @RequestParam(required = false) String search) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products default successfully", productService.getProductDefaultWithSearchAndSearch(pageNo,pageSize,sort,search));
+    }
+    @GetMapping("/list-with-search")
+    public ResponseData<?> getAllProductsWithSpecification(Pageable pageable, @RequestParam(required = false) String[] product, @RequestParam(required = false) String[] category, @RequestParam(required = false) String[] productVariant) {
+        return new ResponseData<>(HttpStatus.OK.value(), "Get list products success", productService.advanceSearchWithSpecification(pageable, product,category ,productVariant));
     }
 
 
