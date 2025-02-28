@@ -1,6 +1,7 @@
 package com.freshfood.service.impl;
 
 import com.freshfood.dto.request.ProductRequestDTO;
+import com.freshfood.dto.request.ProductVariantRequestDTO;
 import com.freshfood.dto.response.*;
 import com.freshfood.model.Product;
 import com.freshfood.model.ProductImage;
@@ -124,7 +125,7 @@ public class ProductServiceImpl implements ProductService {
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .totalPage(products.getTotalPages())
-                .items(productResponseDTOS)
+                .items(convertToDefaultProduct(productResponseDTOS))
                 .build();
     }
 
@@ -138,6 +139,14 @@ public class ProductServiceImpl implements ProductService {
         return productSearchRepository.advanceSearchWithSpecification(pageable,product,category, productVariant);
     }
 
+    @Override
+    public PageResponse advanceSearchProductVariantWithSpecification(Pageable pageable, String[] product, String[] category, String[] productVariant) {
+        PageResponse pageResponse = productSearchRepository.advanceSearchWithSpecification(pageable,product,category, productVariant);
+        pageResponse.setItems(convertToDefaultProduct((List<ProductResponseDTO>) pageResponse.getItems()));
+        return pageResponse;
+    }
+
+
     private HashSet<ProductImage> convertToProductImage(String[] urlImage, Product product) {
         HashSet<ProductImage> productImages = new HashSet<>();
         for (int i = 0; i < urlImage.length; i++) {
@@ -148,5 +157,35 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
         return productImages;
+    }
+    private List<DefaultProduct> convertToDefaultProduct(List<ProductResponseDTO> productResponseDTOS){
+        List<DefaultProduct> defaultProducts = new ArrayList<>();
+        for (ProductResponseDTO productResponseDTO : productResponseDTOS) {
+            if(!productResponseDTO.getProductVariants().isEmpty()){
+                ProductVariantResponseDTO variant = productResponseDTO.getProductVariants()
+                        .stream()
+                        .findFirst()
+                        .map(v -> ProductVariantResponseDTO.builder()
+                                .thumbnailUrl(v.getThumbnailUrl())
+                                .price(v.getPrice())
+                                .unit(v.getUnit())
+                                .name(v.getName())
+                                .id(v.getId())
+                                .discountPercentage(v.getDiscountPercentage())
+                                .expiryDate(v.getExpiryDate())
+                                .status(v.getStatus())
+                                .build())
+                        .orElse(null);
+                DefaultProduct defaultProduct = DefaultProduct.builder()
+                        .id(productResponseDTO.getId())
+                        .thumbnailUrl(productResponseDTO.getThumbnailUrl())
+                        .price(variant.getPrice())
+                        .discountPercentage(variant.getDiscountPercentage())
+                        .name(productResponseDTO.getName())
+                        .build();
+                defaultProducts.add(defaultProduct);
+            }
+        }
+        return defaultProducts;
     }
 }

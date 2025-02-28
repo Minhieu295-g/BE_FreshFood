@@ -183,10 +183,17 @@ public class ProductSearchRepository {
         }
         Predicate productPredicate = builder.or(productPredicates.toArray(new Predicate[0]));
         Predicate categoryPredicate = builder.or(categoryPredicates.toArray(new Predicate[0]));
-        Predicate variantPredicate = builder.or(productVariantPredicates.toArray(new Predicate[0]));
+        Predicate variantPredicate = builder.and(productVariantPredicates.toArray(new Predicate[0]));
         Predicate finalPredicate;
         if(category==null && product==null && productVariant !=null) finalPredicate = variantPredicate;
-        else finalPredicate = builder.and(productPredicate, categoryPredicate,variantPredicate);
+        else if(category == null && product!=null && productVariant!=null){
+            finalPredicate = builder.and(productPredicate,variantPredicate);
+        }else if(category !=null && product == null && productVariant!=null){
+            finalPredicate = builder.and(categoryPredicate,variantPredicate);
+            log.info("Da vao day ne category voi variant");
+        }else{
+            finalPredicate = builder.and(productPredicate,categoryPredicate,variantPredicate);
+        }
         query.where(finalPredicate);
         List<Product> productList = entityManager.createQuery(query).setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize()).getResultList();

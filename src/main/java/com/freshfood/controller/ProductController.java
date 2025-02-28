@@ -55,6 +55,10 @@ public class ProductController {
     public ResponseData<?> getAllProductsWithSpecification(Pageable pageable, @RequestParam(required = false) String[] product, @RequestParam(required = false) String[] category, @RequestParam(required = false) String[] productVariant) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products success", productService.advanceSearchWithSpecification(pageable, product,category ,productVariant));
     }
+    @GetMapping("/list-with-search-product")
+    public ResponseData<?> getAllProductDefaultWithSpecification(Pageable pageable, @RequestParam(required = false) String[] product, @RequestParam(required = false) String[] category, @RequestParam(required = false) String[] productVariant) {
+        return new ResponseData<>(HttpStatus.OK.value(), "Get list products success", productService.advanceSearchProductVariantWithSpecification(pageable, product,category ,productVariant));
+    }
 
 
 }

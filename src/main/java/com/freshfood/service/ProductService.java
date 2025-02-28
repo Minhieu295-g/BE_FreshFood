@@ -15,4 +15,6 @@ public interface ProductService {
     PageResponse getProducts(int pageNo, int pageSize);
     PageResponse getProductDefaultWithSearchAndSearch(int pageNo, int pageSize, String sort, String search);
     PageResponse advanceSearchWithSpecification(Pageable pageable, String[] product, String[] category, String[] productVariant);
+    PageResponse advanceSearchProductVariantWithSpecification(Pageable pageable, String[] product, String[] category, String[] productVariant);
+
 }
