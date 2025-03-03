@@ -1,4 +1,4 @@
-#spring:
+spring:
 #  datasource:
 #    url: jdbc:postgresql://localhost:5432/freshfood
 #    username: lemin
@@ -13,6 +13,11 @@
 #server:
 #  port: 80
 #
+    jwt:
+      accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+      refeshKey: 9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc=
+      expireHour: 1
+      expireDay: 7
 cloudinary:
   cloud-name: digtjnoh3
   api-key: 179441211917755
