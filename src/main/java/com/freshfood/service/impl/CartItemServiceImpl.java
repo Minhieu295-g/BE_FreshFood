@@ -4,10 +4,12 @@ import com.freshfood.dto.request.CartItemRequestDTO;
 import com.freshfood.model.Cart;
 import com.freshfood.model.CartItem;
 import com.freshfood.model.Product;
+import com.freshfood.model.ProductVariant;
 import com.freshfood.repository.CartItemRepository;
 import com.freshfood.service.CartItemService;
 import com.freshfood.service.CartService;
 import com.freshfood.service.ProductService;
+import com.freshfood.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartItemServiceImpl implements CartItemService {
     private final CartService cartService;
-    private final ProductService productService;
+    private final ProductVariantService productVariantService;
     private final CartItemRepository cartItemRepository;
 
     @Override
@@ -28,9 +30,8 @@ public class CartItemServiceImpl implements CartItemService {
     @Override
     public int saveCartItem(CartItemRequestDTO cartItemRequestDTO) {
         Cart cart = cartService.getCartById(cartItemRequestDTO.getCartId());
-        Product product = productService.getProduct(cartItemRequestDTO.getProductId());
-
-        Optional<CartItem> cartItemAvailable = cartItemRepository.findByCartAndProduct(cart, product);
+        ProductVariant productVariant = productVariantService.getProductVariantById(cartItemRequestDTO.getProductVariantId());
+        Optional<CartItem> cartItemAvailable = cartItemRepository.findByCartAndProductVariant(cart, productVariant);
 
         // Kiểm tra xem CartItem đã tồn tại hay chưa
         if (cartItemAvailable.isPresent()) {
@@ -42,7 +43,7 @@ public class CartItemServiceImpl implements CartItemService {
         } else {
             CartItem cartItem = CartItem.builder()
                     .cart(cart)
-                    .product(product)
+                    .productVariant(productVariant)
                     .quantity(cartItemRequestDTO.getQuantity())
                     .build();
             cartItemRepository.save(cartItem);

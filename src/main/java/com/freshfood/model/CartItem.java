@@ -19,8 +19,8 @@ public class CartItem extends AbsEntity<Integer>{
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "product_variant_id")
+    private ProductVariant productVariant;
 
     @Column(name = "quantity")
     private int quantity;

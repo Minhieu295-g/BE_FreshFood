@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class CartItemRequestDTO implements Serializable {
     private int cartId;
 
-    private int productId;
+    private int productVariantId;
 
     private int quantity;
 }

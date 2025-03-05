@@ -4,12 +4,16 @@ import com.freshfood.dto.response.*;
 import com.freshfood.model.Cart;
 import com.freshfood.model.CartItem;
 import com.freshfood.model.Product;
+import com.freshfood.model.ProductVariant;
 import com.freshfood.repository.CartRepository;
 import com.freshfood.service.CartService;
+import com.freshfood.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
+    private final ProductServiceImpl productService;
 
     @Override
     public Cart getCartById(int id) {
@@ -35,9 +40,9 @@ public class CartServiceImpl implements CartService {
         Set<CartItemReponseDTO> cartItemReponseDTOS = new HashSet<>();
         for (CartItem cartItem : cartItems) {
             cartItemReponseDTOS.add(CartItemReponseDTO.builder()
-                            .id(cartItem.getId())
-//                            .productDTO(convertToProductResponse(cartItem.getProduct()))
-                            .quantity(cartItem.getQuantity())
+                    .id(cartItem.getId())
+                    .productVariantDTO(convertToProductVariantResponse(cartItem.getProductVariant()))
+                    .quantity(cartItem.getQuantity())
                     .build());
         }
         return CartResponseDTO.builder()
@@ -49,22 +54,20 @@ public class CartServiceImpl implements CartService {
     private Cart findById(int id) {
         return cartRepository.findById(id).orElseThrow(() -> new RuntimeException("Cart not found"));
     }
-//    public ProductResponseDTO convertToProductResponse(Product product) {
-//        return ProductResponseDTO.builder()
-//                .category(new CategoryResponseDTO(product.getCategory()))
-//                .name(product.getName())
-//                .description(product.getDescription())
-//                .price(product.getPrice())
-//                .unit(product.getUnit().toString())
-//                .thumbnailUrl(product.getThumbnailUrl())
-//                .expiryDate(product.getExpiryDate())
-//                .id(product.getId())
-//                .status(product.getStatus().toString())
-//                .productImages((Set<ProductImageResponseDTO>) product.getProductImages().stream().map(productImage -> ProductImageResponseDTO.builder()
-//                        .id(productImage.getId())
-//                        .imageUrl(productImage.getImageUrl())
-//                        .altText(productImage.getAltText())
-//                        .build()).collect(Collectors.toSet()))
-//                .build();
-//    }
+
+    private ProductVariantResponseDTO convertToProductVariantResponse(ProductVariant productVariant){
+        return ProductVariantResponseDTO.builder()
+                .id(productVariant.getId())
+                .name(productVariant.getName())
+                .unit(productVariant.getUnit().toString())
+                .price(productVariant.getPrice())
+                .status(productVariant.getStatus().toString())
+                .discountPercentage(productVariant.getDiscountPercentage())
+                .thumbnailUrl(productVariant.getThumbnailUrl())
+                .expiryDate(productVariant.getExpiryDate())
+                .build();
+    }
+
+
+
 }

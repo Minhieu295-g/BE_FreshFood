@@ -12,7 +12,6 @@ import lombok.*;
 @Entity
 @Table(name = "roles")
 public class Role extends AbsEntity<Integer>{
-
     @Enumerated(EnumType.STRING)
     @Column(name = "name")
     private UserRole name;
