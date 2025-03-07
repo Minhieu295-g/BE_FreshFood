@@ -7,4 +7,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService {
     UserDetailsService userDetails();
     int addUser(UserRequestDTO userRequestDTO);
+
 }

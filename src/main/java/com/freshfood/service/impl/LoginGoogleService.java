@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Service
-public class LoginProviderService {
+public class LoginGoogleService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
 
