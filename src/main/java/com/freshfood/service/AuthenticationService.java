@@ -54,6 +54,7 @@ public class AuthenticationService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .username(signInRequest.getUsername())
+                .fullName(user.getFullName())
                 .userId( user.getId())
                 .cartId(cart.get().getId())
                 .build();
@@ -80,6 +81,7 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .userId((user.get().getId()))
                 .username(user.get().getUsername())
+                .fullName(user.get().getFullName())
                 .cartId(cart.get().getId())
                 .build();
     }
@@ -120,6 +122,7 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .username(user.getUsername())
                 .userId( user.getId())
+                .fullName(user.getFullName())
                 .cartId(cart.get().getId())
                 .build();
     }

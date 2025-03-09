@@ -9,5 +9,6 @@ import java.io.Serializable;
 public class UserLoginResponse implements Serializable {
     private Integer userId;
     private String username;
+    private String fullName;
     private Integer cartId;
 }

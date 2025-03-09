@@ -13,18 +13,15 @@ public record TokenService(TokenRepository tokenRepository) {
     public Token getByUsername(String username) {
         return tokenRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
-    public int save(Token token) {
+    public void save(Token token) {
         Optional<Token> existingToken = tokenRepository.findByUsername(token.getUsername());
         if (!existingToken.isPresent()) {
             tokenRepository.save(token);
-            return token.getId();
         }else {
             Token t = existingToken.get();
             t.setAccessToken(token.getAccessToken());
             t.setRefreshToken(token.getRefreshToken());
             tokenRepository.save(t);
-            return t.getId();
-
         }
     }
     public void delete(String username){

@@ -12,6 +12,7 @@ public class TokenResponse implements Serializable {
     private String refreshToken;
     private Integer userId;
     private String username;
+    private String fullName;
     private Integer cartId;
 
 }
