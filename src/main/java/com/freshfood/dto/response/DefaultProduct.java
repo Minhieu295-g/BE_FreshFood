@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class DefaultProduct {
     private int id;
+    private int productVariantId;
     private String name;
     private String thumbnailUrl;
     private double price;

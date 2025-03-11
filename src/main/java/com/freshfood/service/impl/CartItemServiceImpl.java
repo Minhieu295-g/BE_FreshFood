@@ -55,6 +55,9 @@ public class CartItemServiceImpl implements CartItemService {
     public void updateCartItem(int id, CartItemRequestDTO cartItemRequestDTO) {
         CartItem cartItem = getCartItem(id);
         cartItem.setQuantity(cartItemRequestDTO.getQuantity());
+        if(cartItem.getQuantity() <= 0){
+            cartItemRepository.delete(cartItem);
+        }
         cartItemRepository.save(cartItem);
     }
 

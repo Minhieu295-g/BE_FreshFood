@@ -10,5 +10,5 @@ import lombok.Setter;
 public class CartItemReponseDTO {
     private int id;
     private int quantity;
-    private ProductVariantResponseDTO productVariantDTO;
+    private ProductVariantResponseDTO productVariant;
 }

@@ -178,6 +178,7 @@ public class ProductServiceImpl implements ProductService {
                         .orElse(null);
                 DefaultProduct defaultProduct = DefaultProduct.builder()
                         .id(productResponseDTO.getId())
+                        .productVariantId(variant.getId())
                         .thumbnailUrl(productResponseDTO.getThumbnailUrl())
                         .price(variant.getPrice())
                         .discountPercentage(variant.getDiscountPercentage())

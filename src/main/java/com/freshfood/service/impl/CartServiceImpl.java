@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartService {
         for (CartItem cartItem : cartItems) {
             cartItemReponseDTOS.add(CartItemReponseDTO.builder()
                     .id(cartItem.getId())
-                    .productVariantDTO(convertToProductVariantResponse(cartItem.getProductVariant()))
+                    .productVariant(convertToProductVariantResponse(cartItem.getProductVariant()))
                     .quantity(cartItem.getQuantity())
                     .build());
         }
