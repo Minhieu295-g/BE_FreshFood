@@ -40,6 +40,9 @@ public class DeliveryAddress extends AbsEntity<Integer>{
     @Column(name = "detail_address")
     private String detailAddress;
 
+    @Column(name = "is_default")
+    private boolean isDefault;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(name = "user_id")

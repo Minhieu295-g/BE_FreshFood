@@ -47,4 +47,9 @@ public class UserServiceImpl implements UserService {
         cartRepository.save(new Cart(user, new HashSet<>()));
         return user.getId();
     }
+
+    @Override
+    public User findByUserId(int id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
