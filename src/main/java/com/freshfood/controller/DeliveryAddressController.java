@@ -1,6 +1,7 @@
 package com.freshfood.controller;
 
 import com.freshfood.dto.request.DeliveryAddressRequestDTO;
+import com.freshfood.dto.response.DeliveryAddressResponseDTO;
 import com.freshfood.dto.response.ResponseData;
 import com.freshfood.service.DeliveryAddressService;
 import com.freshfood.service.api.GiaoHangNhanhService;
@@ -32,6 +33,12 @@ public class DeliveryAddressController {
     @PostMapping("/")
     public ResponseData<?> addDeliveryAddress(@RequestBody DeliveryAddressRequestDTO deliveryAddress) {
         return new ResponseData<>(HttpStatus.OK.value(), "Save Delivery Address successfully!", deliveryAddressService.addDeliveryAddress(deliveryAddress));
+    }
+
+    @GetMapping("/default")
+    public ResponseData<?> getDeliveryAddressDefault(@RequestParam int userId, @RequestParam boolean isDefault) {
+        DeliveryAddressResponseDTO result = deliveryAddressService.getDeliveryAddressDefault(userId, isDefault);
+        return new ResponseData<>(HttpStatus.OK.value(), "Get default address successfully!", result);
     }
 
 }

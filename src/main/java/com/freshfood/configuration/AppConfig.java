@@ -32,7 +32,7 @@ public class AppConfig {
 
     private final String[] WHITE_LIST = {
             "/auth/**", "/product/**", "/user/**", "/category/**", "/parent-category/**", "/cloud/**", "/cart/**", "/delivery-address/**",
-            "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/*swagger-initializer.js", "/webjars/**"
+            "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/*swagger-initializer.js", "/webjars/**", "/api/vnpay/**"
     };
 
     @Bean
