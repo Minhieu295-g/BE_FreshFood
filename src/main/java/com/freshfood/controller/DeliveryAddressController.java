@@ -40,5 +40,9 @@ public class DeliveryAddressController {
         DeliveryAddressResponseDTO result = deliveryAddressService.getDeliveryAddressDefault(userId, isDefault);
         return new ResponseData<>(HttpStatus.OK.value(), "Get default address successfully!", result);
     }
+    @GetMapping("/delivery-fee")
+    public ResponseData<?> getDeliveryFree(@RequestParam int deliveryAddressId){
+        return new ResponseData<>(HttpStatus.OK.value(), "Get default address successfully!", deliveryAddressService.getDeliveryFeeResponse(deliveryAddressId));
+    }
 
 }

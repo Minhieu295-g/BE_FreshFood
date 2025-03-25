@@ -2,11 +2,13 @@ package com.freshfood.service.impl;
 
 import com.freshfood.dto.request.DeliveryAddressRequestDTO;
 import com.freshfood.dto.response.DeliveryAddressResponseDTO;
+import com.freshfood.dto.response.DeliveryFeeResponseDTO;
 import com.freshfood.model.DeliveryAddress;
 import com.freshfood.model.User;
 import com.freshfood.repository.DeliveryAddressRepository;
 import com.freshfood.service.DeliveryAddressService;
 import com.freshfood.service.UserService;
+import com.freshfood.service.api.GiaoHangNhanhService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     private final DeliveryAddressRepository deliveryAddressRepository;
     private final UserService userService;
+    private final GiaoHangNhanhService giaoHangNhanhService;
     @Override
     public int addDeliveryAddress(DeliveryAddressRequestDTO deliveryAddressRequestDTO) {
         User user = userService.findByUserId(deliveryAddressRequestDTO.getUserId());
@@ -78,5 +81,14 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
                     .build();
         }
         return null;
+    }
+
+    @Override
+    public DeliveryFeeResponseDTO getDeliveryFeeResponse(int deliveryAddressId) {
+        DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(deliveryAddressId).orElse(null);
+        String wardId = String.valueOf(deliveryAddress.getWardId());
+        String districtId = String.valueOf(deliveryAddress.getDistrictId());
+
+        return giaoHangNhanhService.getData2("NON", wardId , districtId);
     }
 }
