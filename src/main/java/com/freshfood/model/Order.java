@@ -4,9 +4,7 @@ import com.freshfood.util.OrderStatusEnum;
 import com.freshfood.util.PaymentMethodsEnum;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -17,6 +15,9 @@ import java.util.Set;
 @Entity
 @Table(name = "orders")
 public class Order extends AbsEntity<Integer>{
+
+    @Column(name = "order_code", unique = true)
+    private String orderCode;
 
     @Column(nullable = false, name = "total_price")
     private double totalPrice;

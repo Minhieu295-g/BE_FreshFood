@@ -1,5 +1,6 @@
 package com.freshfood.dto.request;
 
+import com.freshfood.dto.response.CartItemReponseDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,5 @@ public class OrderRequestDTO implements Serializable {
     private int voucherId;
     private int deliveryAddressId;
     private int userId;
-    private Set<CartItemRequestDTO> cartItems;
+    private Set<CartItemReponseDTO> cartItems;
 }

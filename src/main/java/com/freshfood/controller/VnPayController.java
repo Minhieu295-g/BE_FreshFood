@@ -17,7 +17,7 @@ public class VnPayController {
     private final PaymentService paymentService;
     @GetMapping("/vn-pay")
     public ResponseData<?> pay(HttpServletRequest request, @RequestParam("amount") String amount) throws UnsupportedEncodingException {
-        return paymentService.createVnPayPayment(request, amount);
+        return null;
     }
 
 }

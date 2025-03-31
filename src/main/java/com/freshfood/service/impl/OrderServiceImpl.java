@@ -1,7 +1,9 @@
 package com.freshfood.service.impl;
 import com.freshfood.dto.request.CartItemRequestDTO;
 import com.freshfood.dto.request.OrderRequestDTO;
+import com.freshfood.dto.response.CartItemReponseDTO;
 import com.freshfood.dto.response.DeliveryFeeResponseDTO;
+import com.freshfood.dto.response.PageResponse;
 import com.freshfood.model.*;
 import com.freshfood.repository.OrderRepository;
 import com.freshfood.service.*;
@@ -10,17 +12,22 @@ import com.freshfood.util.DiscountTypeEnum;
 import com.freshfood.util.OrderStatusEnum;
 import com.freshfood.util.PaymentMethodsEnum;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import static com.freshfood.util.OrderStatusEnum.PENDING;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final VoucherService voucherService;
@@ -30,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemService cartItemService;
     private final UserService userService;
     @Override
-    public int addOrder(OrderRequestDTO orderRequestDTO) {
+    public String addOrder(OrderRequestDTO orderRequestDTO) {
         int deliveryAddressId = orderRequestDTO.getDeliveryAddressId();
         int voucherId = orderRequestDTO.getVoucherId();
         int userId = orderRequestDTO.getUserId();
@@ -38,9 +45,9 @@ public class OrderServiceImpl implements OrderService {
         DeliveryFeeResponseDTO deliveryFee = getDeliveryFee(address);
         Instant instant = Instant.parse(deliveryFee.getDeliveryDate());
         Date date = Date.from(instant);
+        log.info("Da vao den day ne: ");
         Order order = Order.builder()
                 .orderStatus(PENDING)
-                .paymentMethods(PaymentMethodsEnum.CASH)
                 .note(orderRequestDTO.getNote())
                 .deliveryAddress(deliveryAddressService.getDeliveryAddressById(deliveryAddressId))
                 .voucher(voucherService.getVoucherById(voucherId))
@@ -48,21 +55,45 @@ public class OrderServiceImpl implements OrderService {
                 .expectedDeliveryTime(date)
                 .user(userService.findByUserId(userId))
                 .build();
+        if(orderRequestDTO.getPaymentMethod().equals(PaymentMethodsEnum.COD.toString())){
+            order.setPaymentMethods(PaymentMethodsEnum.COD);
+        }else if(orderRequestDTO.getPaymentMethod().equals(PaymentMethodsEnum.BANK_TRANSFER.toString())){
+            order.setPaymentMethods(PaymentMethodsEnum.BANK_TRANSFER);
+        }
         Set<OrderItem> orderItems = convertToOrderItems(orderRequestDTO.getCartItems(), order);
         order.setOrderItems(orderItems);
         double totalPrice = calTotalPrice(order.getVoucher(), orderItems);
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
+        order.setOrderCode(generateOrderCode(order.getId()));
+        orderRepository.save(order);
         deleteCartItem(orderRequestDTO.getCartItems());
-        return order.getId();
+        return order.getOrderCode();
     }
 
-    private Set<OrderItem> convertToOrderItems(Set<CartItemRequestDTO> cartItems, Order order) {
+    @Override
+    public PageResponse getOrdersByUserId(int userId, int pageNo, int pageSize) {
+        return null;
+    }
+
+    private void deleteCartItem(Set<CartItemReponseDTO> cartItems){
+        for (CartItemReponseDTO cart: cartItems){
+            cartItemService.deleteCartItem(cart.getId());
+        }
+    }
+    private String generateOrderCode(int orderId) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        Random random = new Random();
+        int rd = random.nextInt(1000);
+        return "ORD-" + today.format(formatter) + "-" + orderId + rd;
+    }
+    private Set<OrderItem> convertToOrderItems(Set<CartItemReponseDTO> cartItems, Order order) {
         Set<OrderItem> orderItems = new HashSet<>();
-        for (CartItemRequestDTO cartItem : cartItems) {
+        for (CartItemReponseDTO cartItem : cartItems) {
             orderItems.add(OrderItem.builder()
                             .order(order)
-                            .productVariant(productVariantService.getProductVariantById(cartItem.getProductVariantId()))
+                            .productVariant(productVariantService.getProductVariantById(cartItem.getProductVariant().getId()))
                             .quantity(cartItem.getQuantity())
                             .build());
         }
@@ -95,9 +126,5 @@ public class OrderServiceImpl implements OrderService {
         String districtId = String.valueOf(deliveryAddress.getDistrictId());
         return giaoHangNhanhService.getData2(deliveryAddress.getDetailAddress(), wardId, districtId);
     }
-    private void deleteCartItem(Set<CartItemRequestDTO> cartItems){
-        for (CartItemRequestDTO cart: cartItems){
-            cartItemService.deleteCartItem(cart.getCartId());
-        }
-    }
+
 }
