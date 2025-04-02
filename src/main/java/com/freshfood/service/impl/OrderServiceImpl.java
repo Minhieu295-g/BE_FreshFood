@@ -1,9 +1,7 @@
 package com.freshfood.service.impl;
 import com.freshfood.dto.request.CartItemRequestDTO;
 import com.freshfood.dto.request.OrderRequestDTO;
-import com.freshfood.dto.response.CartItemReponseDTO;
-import com.freshfood.dto.response.DeliveryFeeResponseDTO;
-import com.freshfood.dto.response.PageResponse;
+import com.freshfood.dto.response.*;
 import com.freshfood.model.*;
 import com.freshfood.repository.OrderRepository;
 import com.freshfood.service.*;
@@ -13,15 +11,16 @@ import com.freshfood.util.OrderStatusEnum;
 import com.freshfood.util.PaymentMethodsEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.freshfood.util.OrderStatusEnum.PENDING;
 
@@ -73,8 +72,61 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageResponse getOrdersByUserId(int userId, int pageNo, int pageSize) {
-        return null;
+        User user = userService.findByUserId(userId);
+        pageNo = (pageNo == 0) ? 1 : pageNo;
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<Order> orders = orderRepository.findByUser(user, pageable);
+        List<OrderResponseDTO> orderResponse = orders.stream().map(order -> {
+            List<OrderItemResponseDTO> orderItemResponseDTOs = order.getOrderItems().stream().map(orderItem ->
+                            OrderItemResponseDTO.builder()
+                                    .id(orderItem.getId())
+                                    .product(ProductVariantResponseDTO.builder()
+                                            .id(orderItem.getProductVariant().getId())
+                                            .name(orderItem.getProductVariant().getProduct().getName())
+                                            .price(orderItem.getProductVariant().getPrice())
+                                            .thumbnailUrl(orderItem.getProductVariant().getThumbnailUrl())
+                                            .unit(orderItem.getProductVariant().getUnit().toString())
+                                            .expiryDate(orderItem.getProductVariant().getExpiryDate())
+                                            .status(orderItem.getProductVariant().getStatus().toString())
+                                            .build())
+                                    .quantity(orderItem.getQuantity())
+                                    .build())
+                    .collect(Collectors.toList());
+
+            return OrderResponseDTO.builder()
+                    .id(order.getId())
+                    .orderNumber(order.getOrderCode())
+                    .date(order.getCreatedAt())
+                    .totalPrice(order.getTotalPrice())
+                    .shippingFee(order.getDeliveryFee())
+                    .expectedDate(order.getExpectedDeliveryTime())
+                    .paymentMethod(order.getPaymentMethods().name())
+                    .status(order.getOrderStatus().name().toLowerCase())
+                    .note(order.getNote())
+                    .items(orderItemResponseDTOs)
+                    .shippingAddress(DeliveryAddressResponseDTO.builder()
+                            .id(order.getDeliveryAddress().getId())
+                            .name(order.getDeliveryAddress().getName())
+                            .numberPhone(order.getDeliveryAddress().getNumberPhone())
+                            .provinceId(order.getDeliveryAddress().getProvinceId())
+                            .wardId(order.getDeliveryAddress().getWardId())
+                            .districtId(order.getDeliveryAddress().getDistrictId())
+                            .provinceName(order.getDeliveryAddress().getProvinceName())
+                            .districtName(order.getDeliveryAddress().getDistrictName())
+                            .wardName(order.getDeliveryAddress().getWardName())
+                            .isDefault(order.getDeliveryAddress().isDefault())
+                            .detailAddress(order.getDeliveryAddress().getDetailAddress())
+                            .build())
+                    .build();
+        }).collect(Collectors.toList());
+        return PageResponse.builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .totalPage(orders.getTotalPages())
+                .items(orderResponse)
+                .build();
     }
+
 
     private void deleteCartItem(Set<CartItemReponseDTO> cartItems){
         for (CartItemReponseDTO cart: cartItems){
