@@ -23,14 +23,14 @@ public class ParentCategoryController {
     private final CloudinaryService cloudinaryService;
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseData<?> addParentCategory(
-            @RequestPart("file") MultipartFile file, @RequestPart("parentCategory") String name) throws IOException {
+            @RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("name") String name) throws IOException {
         ParentCategoryRequestDTO parentCategoryRequestDTO = new ParentCategoryRequestDTO();
         parentCategoryRequestDTO.setName(name);
         int id = parentCategoryService.saveParentCategory(parentCategoryRequestDTO, cloudinaryService.uploadImage(file));
         return new ResponseData<>(HttpStatus.CREATED.value(), "Parent category added successfully", id );
     }
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseData<?> updateParentCategory(@PathVariable int id,@RequestPart("file") MultipartFile file,@RequestPart("parentCategory") String name) throws IOException {
+    public ResponseData<?> updateParentCategory(@PathVariable int id,@RequestPart("file") MultipartFile file,@RequestPart("name") String name) throws IOException {
         parentCategoryService.updateParentCategory(id, new ParentCategoryRequestDTO(name), cloudinaryService.uploadImage(file));
         return new ResponseData<>(HttpStatus.CREATED.value(), "Parent category was updated successfully");
     }
