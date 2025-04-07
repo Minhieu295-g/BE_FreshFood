@@ -44,7 +44,7 @@ public class AppConfig {
                         .allowedOrigins("http://localhost:3000") // Thêm cổng Swagger
                         .allowCredentials(true)
                         .maxAge(3600)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }
         };
