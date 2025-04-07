@@ -125,7 +125,7 @@ public class ProductServiceImpl implements ProductService {
                 .pageNo(pageNo)
                 .pageSize(pageSize)
                 .totalPage(products.getTotalPages())
-                .items(convertToDefaultProduct(productResponseDTOS))
+                .items(productResponseDTOS)
                 .build();
     }
 

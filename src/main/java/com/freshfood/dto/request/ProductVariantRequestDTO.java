@@ -28,14 +28,16 @@ public class ProductVariantRequestDTO implements Serializable {
 
     private int discountPercentage;
 
-    @EnumPattern(name = "unit", regexp = "KG|G|L|ML|BOX|CAN|BOTTLE|PIECE|BAG|BUNDLE|PACK")
+    @EnumPattern(name = "unit", regexp = "(?i)KG|G|L|ML|BOX|CAN|BOTTLE|PIECE|BAG|BUNDLE|PACK")
     private Unit unit;
 
+
     @NotNull(message = "Expiry date must be not null")
-    @JsonFormat(pattern = "MM/dd/yyyy")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "MM/dd/yyyy", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "MM/dd/yyyy")
     private Date expiryDate;
 
-    @EnumPattern(name = "status", regexp = "AVAILABLE|OUT_OF_STOCK|DISCONTINUED|PRE_ORDER|ARCHIVED")
+
+    @EnumPattern(name = "status", regexp = "(?)AVAILABLE|OUT_OF_STOCK|DISCONTINUED|PRE_ORDER|ARCHIVED")
     private ProductStatus status;
 }
