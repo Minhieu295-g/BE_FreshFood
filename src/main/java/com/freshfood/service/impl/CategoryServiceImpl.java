@@ -8,15 +8,19 @@ import com.freshfood.repository.CategoryRepository;
 import com.freshfood.service.CategoryService;
 import com.freshfood.service.ParentCategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final ParentCategoryService parentCategoryService;
     private final CategoryRepository categoryRepository;
@@ -39,9 +43,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(int id) {
-        categoryRepository.deleteById(id);
+        try {
+            Category category = categoryRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            log.info("Delete Category : {}", category.getName());
+            categoryRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Cannot delete category. It is referenced by other entities.");
+        }
     }
+
 
     @Override
     public PageResponse getAllCategory(int pageNo, int pageSize) {

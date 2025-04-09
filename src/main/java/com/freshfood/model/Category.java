@@ -14,7 +14,6 @@ import lombok.*;
 public class Category extends AbsEntity<Integer> {
     @Column(name = "name")
     private String name;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_category_id")
     @JsonBackReference
