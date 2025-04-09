@@ -31,7 +31,7 @@ public class AppConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     private final String[] WHITE_LIST = {
-            "/auth/**", "/product/**", "/user/**", "/category/**", "/parent-category/**", "/cloud/**", "/cart/**", "/delivery-address/**",
+            "/auth/**", "/product/**", "/user/**", "/category/**", "/parent-category/**", "/cloud/**", "/cart/**", "/delivery-address/**", "/admin/**",
             "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/*swagger-initializer.js", "/webjars/**", "/api/vnpay/**", "/order/**"
     };
 
