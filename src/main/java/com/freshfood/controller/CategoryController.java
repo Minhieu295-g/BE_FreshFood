@@ -27,7 +27,7 @@ public class CategoryController {
         return new ResponseData<>(HttpStatus.OK.value(), "Category was deleted successfully");
     }
     @GetMapping("/list")
-    public ResponseData<?> getAllCategory(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize){
+    public ResponseData<?> getAllCategory(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "20") int pageSize){
         return new ResponseData<>(HttpStatus.OK.value(), "Get list category successfully", categoryService.getAllCategory(pageNo, pageSize));
     }
 }

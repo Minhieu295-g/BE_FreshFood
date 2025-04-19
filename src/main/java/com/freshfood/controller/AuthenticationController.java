@@ -52,6 +52,7 @@ public class AuthenticationController {
                 .userId(tokenResponse.getUserId())
                 .fullName(tokenResponse.getFullName())
                 .cartId(tokenResponse.getCartId())
+                .role(tokenResponse.getRole().toUpperCase())
                 .build();
         return new ResponseData<>(HttpStatus.OK.value(), "Login successfully!", userLoginResponse);
     }
@@ -63,6 +64,7 @@ public class AuthenticationController {
                 .userId(tokenResponse.getUserId())
                 .fullName(tokenResponse.getFullName())
                 .cartId(tokenResponse.getCartId())
+                .role(tokenResponse.getRole().toUpperCase())
                 .build();
         return new ResponseData<>(HttpStatus.OK.value(), "Refresh Token successfully!", userLoginResponse );
     }

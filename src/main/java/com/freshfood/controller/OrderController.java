@@ -3,10 +3,12 @@ package com.freshfood.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshfood.dto.request.OrderRequestDTO;
+import com.freshfood.dto.request.OrderStatusRequestDTO;
 import com.freshfood.dto.response.ResponseData;
 import com.freshfood.model.Order;
 import com.freshfood.service.OrderService;
 import com.freshfood.service.PaymentService;
+import com.freshfood.util.OrderStatusEnum;
 import com.freshfood.util.PaymentMethodsEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,10 +60,21 @@ public class OrderController {
             return new RedirectView("http://localhost:3000/order-failed");
         }
     }
+    @PatchMapping("/{orderId}")
+    public ResponseData<?> updateOrderStatus(@PathVariable int orderId, @RequestBody OrderStatusRequestDTO orderStatusRequest){
+        orderService.updateStatus(orderId, orderStatusRequest);
+        return new ResponseData<>(HttpStatus.OK.value(), "Order status updated successfully");
+    }
     @GetMapping("/list/{userId}")
     public ResponseData<?> getOrdersByUserId(@PathVariable int userId, @RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list order successfully", orderService.getOrdersByUserId(userId,pageNo,pageSize));
     }
+
+    @GetMapping("/list/")
+    public ResponseData<?> getOrders(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "15") int pageSize) {
+        return new ResponseData<>(HttpStatus.OK.value(), "Get list order successfully", orderService.getOrders(pageNo,pageSize));
+    }
+
 
 
 

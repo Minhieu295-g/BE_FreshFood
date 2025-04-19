@@ -12,4 +12,8 @@ public enum UserRole {
         }
         throw new IllegalArgumentException("Invalid role: " + role);
     }
+    @Override
+    public String toString() {
+        return name().toUpperCase(); // hoặc viết kiểu khác nếu cần
+    }
 }

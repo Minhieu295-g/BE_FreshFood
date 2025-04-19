@@ -57,6 +57,7 @@ public class AuthenticationService {
                 .fullName(user.getFullName())
                 .userId( user.getId())
                 .cartId(cart.get().getId())
+                .role(user.getRoles().stream().toList().get(0).getName().toString())
                 .build();
     }
     public TokenResponse refreshToken(HttpServletRequest request){
@@ -82,6 +83,7 @@ public class AuthenticationService {
                 .userId((user.get().getId()))
                 .username(user.get().getUsername())
                 .fullName(user.get().getFullName())
+                .role(user.get().getRoles().stream().toList().get(0).getName().toString())
                 .cartId(cart.get().getId())
                 .build();
     }
