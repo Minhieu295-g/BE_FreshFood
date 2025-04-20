@@ -1,12 +1,9 @@
 package com.freshfood.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.freshfood.util.ProductStatus;
-import com.freshfood.util.Unit;
+import com.freshfood.model.listener.ProductListener;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +14,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "products")
+@EntityListeners(ProductListener.class)
 public class Product extends AbsEntity<Integer>{
     @Column(name = "name")
     private String name;

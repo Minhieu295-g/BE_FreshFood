@@ -1,14 +1,14 @@
 package com.freshfood.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PageResponse<T> implements Serializable {
     private int pageNo;
     private int pageSize;

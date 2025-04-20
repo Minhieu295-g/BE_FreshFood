@@ -75,10 +75,7 @@ public class ProductController {
             throw ex;
         }
     }
-    @PostMapping("/met-vcl")
-    public ResponseData<?> addProductVariant() {
-        return new ResponseData<>(HttpStatus.OK.value(), "Product added successfully");
-    }
+
     @GetMapping("/{id}")
     public ResponseData<?> getProductById(@PathVariable int id) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get product successfully", productService.getProductResponseDTO(id));
@@ -100,6 +97,9 @@ public class ProductController {
     public ResponseData<?> getAllProductDefaultWithSpecification(Pageable pageable, @RequestParam(required = false) String[] product, @RequestParam(required = false) String[] category, @RequestParam(required = false) String[] productVariant) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products success", productService.advanceSearchProductVariantWithSpecification(pageable, product,category ,productVariant));
     }
+
+
+
 
 
 }
