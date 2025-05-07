@@ -11,6 +11,7 @@ import com.freshfood.repository.search.ProductSearchRepository;
 import com.freshfood.service.CategoryService;
 import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
+import com.freshfood.service.redis.ProductRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductSearchRepository productSearchRepository;
+    private final ProductRedisService productRedisService;
     @Override
     public int addProduct(ProductRequestDTO productRequestDTO, String thumbnailUrl, String[] imageUrl) {
         Product product = Product.builder()
@@ -141,7 +143,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PageResponse advanceSearchProductVariantWithSpecification(Pageable pageable, String[] product, String[] category, String[] productVariant) {
-        PageResponse pageResponse = productSearchRepository.advanceSearchWithSpecification(pageable,product,category, productVariant);
+        PageResponse pageResponse = productRedisService.getAllProducts(pageable, product, category, productVariant);
+        if(pageResponse==null){
+
+            pageResponse = productSearchRepository.advanceSearchWithSpecification(pageable,product,category, productVariant);
+            productRedisService.saveAllProducts(pageResponse, pageable, product, category, productVariant);
+        }
         pageResponse.setItems(convertToDefaultProduct((List<ProductResponseDTO>) pageResponse.getItems()));
         return pageResponse;
     }
