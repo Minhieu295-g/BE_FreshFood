@@ -1,6 +1,5 @@
 package com.freshfood.controller;
 
-import com.freshfood.dto.request.ProductRequestDTO;
 import com.freshfood.dto.request.ProductVariantRequestDTO;
 import com.freshfood.dto.response.ResponseData;
 import com.freshfood.service.CloudinaryService;

@@ -1,13 +1,15 @@
 package com.freshfood.dto.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Builder
 @Getter
 @Setter
-public class UserAdminRequestDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserAdminRequestDTO implements Serializable {
     private String username;
     private String fullName;
     private String numberPhone;

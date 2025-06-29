@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/delivery-address")
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +40,11 @@ public class DeliveryAddressController {
     @GetMapping("/default")
     public ResponseData<?> getDeliveryAddressDefault(@RequestParam int userId, @RequestParam boolean isDefault) {
         DeliveryAddressResponseDTO result = deliveryAddressService.getDeliveryAddressDefault(userId, isDefault);
+        return new ResponseData<>(HttpStatus.OK.value(), "Get default address successfully!", result);
+    }
+    @GetMapping("/")
+    public ResponseData<?> getDeliveryAddress(@RequestParam int userId) {
+        List<DeliveryAddressResponseDTO> result = deliveryAddressService.getDeliveryAddress(userId);
         return new ResponseData<>(HttpStatus.OK.value(), "Get default address successfully!", result);
     }
     @GetMapping("/delivery-fee")

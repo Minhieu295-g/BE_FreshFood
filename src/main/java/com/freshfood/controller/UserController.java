@@ -1,5 +1,6 @@
 package com.freshfood.controller;
 
+import com.freshfood.dto.request.UserInforRequestDTO;
 import com.freshfood.dto.request.UserRequestDTO;
 import com.freshfood.dto.response.ResponseData;
 import com.freshfood.service.UserService;
@@ -30,12 +31,20 @@ public class UserController {
     }
     @GetMapping("/{id}")
     public ResponseData<?> getUser(@PathVariable int id) {
-        return new ResponseData<>(HttpStatus.OK.value(), "Get user successfully");
+        return new ResponseData<>(HttpStatus.OK.value(), "Get user successfully", userService.getUser(id));
     }
 
     @GetMapping("/list")
     public ResponseData<?> getUsers(@RequestParam(required = false, defaultValue = "0") int pageNo, @RequestParam(required = false, defaultValue = "10") int pageSize) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list user successfully", userService.getUsers(pageNo, pageSize));
     }
+
+    @PutMapping("/{id}")
+    public ResponseData<?> updateUserInfor(@PathVariable int id,@RequestBody UserInforRequestDTO userInforRequestDTO){
+        userService.updateUser(id, userInforRequestDTO);
+        return new ResponseData<>(HttpStatus.OK.value(), "Updated user successfully");
+    }
+
+
 
 }

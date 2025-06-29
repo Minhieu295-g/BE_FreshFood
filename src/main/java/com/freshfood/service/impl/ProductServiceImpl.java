@@ -1,5 +1,7 @@
 package com.freshfood.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.freshfood.dto.request.ProductRequestDTO;
 import com.freshfood.dto.request.ProductVariantRequestDTO;
 import com.freshfood.dto.response.*;
@@ -12,15 +14,16 @@ import com.freshfood.service.CategoryService;
 import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
 import com.freshfood.service.redis.ProductRedisService;
+import com.freshfood.util.QRCodeGenerator;
+import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
     private final ProductSearchRepository productSearchRepository;
     private final ProductRedisService productRedisService;
+    private final Cloudinary cloudinary;
     @Override
     public int addProduct(ProductRequestDTO productRequestDTO, String thumbnailUrl, String[] imageUrl) {
         Product product = Product.builder()
@@ -39,7 +43,27 @@ public class ProductServiceImpl implements ProductService {
                 .thumbnailUrl(thumbnailUrl)
                 .build();
         product.setProductImages(convertToProductImage(imageUrl, product));
+
+        product = productRepository.save(product); // quan trọng: phải gán lại vì ID được gán sau khi save
+
+        try {
+            byte[] qrImageBytes = QRCodeGenerator.generateQRCodeImageBytes(
+                    "/product/" + product.getId(), 200, 200);
+
+            Map uploadResult = cloudinary.uploader().upload(qrImageBytes, ObjectUtils.asMap(
+                    "resource_type", "image",
+                    "public_id", "qrcodes/qrcode_" + product.getId()
+            ));
+            String qrImageUrl = uploadResult.get("secure_url").toString();
+
+            product.getProductImages().add(new ProductImage(qrImageUrl, "QRCode", product));
+
+        } catch (Exception e) {
+            throw new RuntimeException("Không thể tạo/upload QR Code", e);
+        }
+
         productRepository.save(product);
+
         return product.getId();
     }
 
@@ -165,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return productImages;
     }
-    private List<DefaultProduct> convertToDefaultProduct(List<ProductResponseDTO> productResponseDTOS){
+    public List<DefaultProduct> convertToDefaultProduct(List<ProductResponseDTO> productResponseDTOS){
         List<DefaultProduct> defaultProducts = new ArrayList<>();
         for (ProductResponseDTO productResponseDTO : productResponseDTOS) {
             if(!productResponseDTO.getProductVariants().isEmpty()){
