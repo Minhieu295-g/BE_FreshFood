@@ -1,15 +1,16 @@
 package com.freshfood.dto.request;
 
 import com.freshfood.dto.response.CartItemReponseDTO;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Set;
 
 @Builder
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderRequestDTO implements Serializable {
     private double totalPrice;
     private String note;

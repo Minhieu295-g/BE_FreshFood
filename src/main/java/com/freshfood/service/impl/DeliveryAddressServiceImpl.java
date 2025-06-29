@@ -84,6 +84,30 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     }
 
     @Override
+    public List<DeliveryAddressResponseDTO> getDeliveryAddress(int userId) {
+        User user = userService.findByUserId(userId);
+        Optional<List<DeliveryAddress>> deliveryAddress = deliveryAddressRepository.findByUser(user);
+        if(deliveryAddress.isPresent()){
+            List<DeliveryAddress> addresses = deliveryAddress.get();
+            List<DeliveryAddressResponseDTO> response = addresses.stream().map( address -> DeliveryAddressResponseDTO.builder()
+                    .id(address.getId())
+                    .provinceId(address.getProvinceId())
+                    .wardId(address.getWardId())
+                    .districtId(address.getDistrictId())
+                    .provinceName(address.getProvinceName())
+                    .wardName(address.getWardName())
+                    .districtName(address.getDistrictName())
+                    .detailAddress(address.getDetailAddress())
+                    .isDefault(address.isDefault())
+                    .name(address.getName())
+                    .numberPhone(address.getNumberPhone())
+                    .build()).toList();
+            return response;
+        }
+        return null;
+    }
+
+    @Override
     public DeliveryFeeResponseDTO getDeliveryFeeResponse(int deliveryAddressId) {
         DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(deliveryAddressId).orElse(null);
         String wardId = String.valueOf(deliveryAddress.getWardId());

@@ -1,6 +1,8 @@
 package com.freshfood.service.impl;
 
+import com.freshfood.dto.request.ChangePasswordRequestDTO;
 import com.freshfood.dto.request.UserAdminRequestDTO;
+import com.freshfood.dto.request.UserInforRequestDTO;
 import com.freshfood.dto.request.UserRequestDTO;
 import com.freshfood.dto.response.PageResponse;
 import com.freshfood.dto.response.UserResponseDTO;
@@ -101,6 +103,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUser(int id, UserInforRequestDTO userInforRequestDTO) {
+        User user = findByUserId(id);
+        if(userInforRequestDTO.getFullName()!=null && !userInforRequestDTO.getFullName().isEmpty()) user.setFullName(userInforRequestDTO.getFullName());
+        if(userInforRequestDTO.getEmail()!=null && !userInforRequestDTO.getEmail().isEmpty()) user.setFullName(userInforRequestDTO.getFullName());
+        if(userInforRequestDTO.getNumberPhone()!=null && !userInforRequestDTO.getNumberPhone().isEmpty()) user.setFullName(userInforRequestDTO.getFullName());
+        userRepository.save(user);
+    }
+
+    @Override
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
@@ -108,6 +119,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserId(int id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public UserResponseDTO getUser(int id) {
+        User user = userRepository.findById(id).orElse(null);
+        if(user!=null){
+            return UserResponseDTO.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .numberPhone(user.getNumberPhone())
+                    .fullName(user.getFullName())
+                    .provider(user.getProvider())
+                    .providerId(user.getProviderId())
+                    .role((user.getRoles().size() == 0) ? null : user.getRoles().stream().toList().get(0).getName().toString().toUpperCase())
+                    .build();
+        }
+        return null;
     }
 
     @Override
@@ -134,4 +163,17 @@ public class UserServiceImpl implements UserService {
                 .items(userResponseDTOS)
                 .build();
     }
+
+    @Override
+    public void changePassword(int id, ChangePasswordRequestDTO changePassword) {
+        User user = findByUserId(id);
+        BCryptPasswordEncoder bCrypt = new BCryptPasswordEncoder();
+
+        if (!bCrypt.matches(changePassword.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Mật khẩu hiện tại không đúng");
+        }
+        user.setPassword(bCrypt.encode(changePassword.getNewPassword()));
+        userRepository.save(user);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.freshfood.service.impl;
 
+import com.freshfood.model.Role;
+import com.freshfood.model.User;
 import com.freshfood.service.JwtService;
 import com.freshfood.util.TokenType;
 import io.jsonwebtoken.Claims;
@@ -17,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.freshfood.util.TokenType.ACCESS_TOKEN;
 import static com.freshfood.util.TokenType.REFRESH_TOKEN;
@@ -35,8 +38,20 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetails user) {
-        return generateToken(Map.of("userId", user.getAuthorities()), user);
+        if (!(user instanceof User)) {
+            throw new IllegalArgumentException("Invalid user type");
+        }
+
+        User appUser = (User) user;
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", appUser.getId()); // id từ AbsEntity
+        claims.put("roles", appUser.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList()));
+        return generateToken(claims, user);
     }
+
 
     @Override
     public String generateRefreshToken(UserDetails user) {

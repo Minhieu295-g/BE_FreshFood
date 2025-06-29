@@ -2,12 +2,15 @@ package com.freshfood.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshfood.dto.request.ChangePasswordRequestDTO;
 import com.freshfood.dto.request.SignInRequest;
+import com.freshfood.dto.request.UserInforRequestDTO;
 import com.freshfood.dto.response.ResponseData;
 import com.freshfood.dto.response.TokenResponse;
 import com.freshfood.dto.response.UserLoginResponse;
 import com.freshfood.service.AuthenticationService;
 
+import com.freshfood.service.UserService;
 import com.freshfood.service.impl.LoginFacebookService;
 import com.freshfood.service.impl.LoginGoogleService;
 import jakarta.servlet.http.Cookie;
@@ -17,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -33,6 +37,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final LoginGoogleService loginGoogleService;
     private final LoginFacebookService loginFacebookService;
+    private final UserService userService;
     @PostMapping("/access")
     public ResponseData<?> login(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
         TokenResponse tokenResponse = authenticationService.authenticate(signInRequest);
@@ -161,5 +166,21 @@ public class AuthenticationController {
         String userJson = new ObjectMapper().writeValueAsString(userLoginResponse);
         String encodedUser = URLEncoder.encode(userJson, StandardCharsets.UTF_8);
         return new RedirectView("http://localhost:3000/auth/callback?user=" + encodedUser);    }
+    @PutMapping("/change-password/{id}")
+    public ResponseData<?> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
+        userService.changePassword(id, changePasswordRequestDTO);
+        return new ResponseData<>(HttpStatus.OK.value(), "Updated user password successfully");
+    }
+
+//    @GetMapping("/me")
+//    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+//        String token = extractTokenFromCookie(request); // hoặc dùng @CookieValue
+//        if (token != null && jwtUtil.validate(token)) {
+//            String username = jwtUtil.getUsername(token);
+//            List<String> roles = jwtUtil.getRoles(token);
+//            return ResponseEntity.ok(Map.of("username", username, "roles", roles));
+//        }
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//    }
 
 }

@@ -6,13 +6,13 @@ import com.freshfood.dto.response.ResponseData;
 import com.freshfood.service.CloudinaryService;
 import com.freshfood.service.ProductService;
 import com.freshfood.service.ProductVariantService;
+import com.freshfood.util.QRCodeScanner;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +31,7 @@ public class ProductController {
     private final ProductService productService;
     private final CloudinaryService cloudinaryService;
     private final ProductVariantService productVariantService;
+    private final QRCodeScanner qrCodeScanner;
 
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseData<?> addProduct(@RequestPart("thumbnail") MultipartFile thumbnail , @RequestPart("images") MultipartFile[] images, @Valid @RequestPart("product") ProductRequestDTO productRequestDTO) throws IOException {
@@ -81,7 +82,7 @@ public class ProductController {
         return new ResponseData<>(HttpStatus.OK.value(), "Get product successfully", productService.getProductResponseDTO(id));
     }
     @GetMapping("/list")
-    public ResponseData<?> getProducts(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseData<?> getProducts(@RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "30") int pageSize) {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products successfully", productService.getProducts(pageNo,pageSize));
     }
 
@@ -98,7 +99,10 @@ public class ProductController {
         return new ResponseData<>(HttpStatus.OK.value(), "Get list products success", productService.advanceSearchProductVariantWithSpecification(pageable, product,category ,productVariant));
     }
 
-
+    @PostMapping(value = "/scan-qr/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseData<?> getScanQRCode( @RequestPart("qr") MultipartFile qrCode){
+        return new ResponseData<>(HttpStatus.OK.value(), "Scan QR Successfully", qrCodeScanner.decodeQRCode(qrCode));
+    }
 
 
 
